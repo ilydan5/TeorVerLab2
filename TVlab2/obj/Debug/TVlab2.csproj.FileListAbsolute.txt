@@ -1,0 +1,9 @@
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.csprojAssemblyReference.cache
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.Form1.resources
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.csproj.GenerateResource.cache
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\TVlab2\TVlab2\bin\Debug\TVlab2.exe.config
+C:\Users\HP\source\repos\TVlab2\TVlab2\bin\Debug\TVlab2.exe
+C:\Users\HP\source\repos\TVlab2\TVlab2\bin\Debug\TVlab2.pdb
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.exe
+C:\Users\HP\source\repos\TVlab2\TVlab2\obj\Debug\TVlab2.pdb
