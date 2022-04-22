@@ -26,24 +26,55 @@ namespace TVlab2
             chart1.Series[2].BorderWidth = 4;
             //Инициализируем переменные
             double A = double.Parse(textBox3.Text);
+            double B = 0;
             int V = int.Parse(textBox1.Text);
             int Nsections = int.Parse(textBox2.Text);
 
             double koefDouble = 0;
             //if (mark.Checked == true) 
-            //koefDouble = double.Parse(textBox5.Text);
+            koefDouble = double.Parse(textBox5.Text);
 
             double[] RandArray = new double[V];
 
             Random random = new Random();
 
-            for (int i = 0; i < V; i++)
+            double min=0;
+            double max=0;
+            double inc = 0;
+
+            if (radioButton1.Checked == true)
             {
-                RandArray[i] = Math.Round(-(1 / A) * Math.Log(random.NextDouble()), 6);
+
+                for (int i = 0; i < V; i++)
+                {
+                    RandArray[i] = Math.Round(-(1 / A) * Math.Log(random.NextDouble()), 6);
+                }
+                
+                min = RandArray.Min();
+                max = RandArray.Max();
             }
 
-            double min = RandArray.Min();
-            double max = RandArray.Max();
+            if (radioButton2.Checked == true)
+            {
+                B = double.Parse(textBox4.Text);
+                for (int i = 0; i < V; i++)
+                {
+                    RandArray[i] = Math.Pow(-2*Math.Log(random.NextDouble()), 0.5)*Math.Cos(2 * 3.14159 * random.NextDouble())*B+A;
+                }
+                min = A-3*B;
+                max = A+3*B;
+            }
+
+            if (radioButton3.Checked == true)
+            {
+                B = double.Parse(textBox4.Text);
+                for (int i = 0; i < V; i++)
+                {
+                    RandArray[i] = random.NextDouble();
+                }
+                min = A;
+                max = B;
+            }
 
             //Промежуточные вычисления
             double h = Math.Abs((max - min)) / Nsections;
@@ -79,7 +110,7 @@ namespace TVlab2
                 hits[i] = Math.Round(hits[i], 3);
             }
 
-            //Выводим гистограмму
+            
             chart1.Series[0].Points.Clear();
             chart1.Series[1].Points.Clear();
             chart1.Series[2].Points.Clear();
@@ -88,13 +119,72 @@ namespace TVlab2
             double Ymax = 0;
             List<double> Y = new List<double>();
 
-            for (double i = min; i <= max; i += h / 10)
+            if (radioButton1.Checked == true)
             {
-                Y.Add(A * Math.Pow(2.718, (-A * i)));
+                inc = 0.01;
+                for (double i = min; i <= max; i += h / 10)
+                {
+                    Y.Add(A * Math.Pow(2.718, (-A * i)));
+                }
+                if (Y.Max() > hits.Max()) Ymax = Y.Max();
+                else Ymax = hits.Max();
             }
 
-            if (Y.Max() > hits.Max()) Ymax = Y.Max();
-            else Ymax = hits.Max();
+            if (radioButton2.Checked == true)
+            {
+                inc = h/10;
+                for (double i = A - 3*B; i <= A+3*B; i += h / 10)
+                {
+                    double degree = -(Math.Pow((i - A), 2)) / 2 / B / B;
+                    double formul = Math.Pow(2.718, degree);
+                    Y.Add(formul / B / Math.Sqrt(2 * 3.142));
+                }
+                if (Y.Max() > hits.Max()) Ymax = Y.Max();
+                else Ymax = hits.Max();
+            }
+
+            if (radioButton3.Checked == true)
+            {
+                inc = h/10;
+                for (double i = min; i <= max; i += h / 10)
+                {
+                    Y.Add(1/(B-A));
+                }
+                if (Y.Max() > hits.Max()) Ymax = Y.Max();
+                else Ymax = hits.Max();
+            }
+
+            
+
+            List<double> MarkGraphic = new List<double>();
+
+            for (double i = min; i <= max; i += inc)
+            {
+                double mult1 = (double)1 / V / koefDouble;
+
+                double sum_of_nuclei = 0;
+
+                int m = 0;
+
+                double core = 0;
+
+                //Считаем сумму ядер
+                for (int l = 0; l < V; l++)
+                {
+                    var argument = (i - RandArray[m]) / koefDouble;
+
+
+                    core = 1 / Math.Sqrt(2 * 3.142) * Math.Pow(2.718, -(Math.Pow(argument, 2)) / 2);
+
+                    sum_of_nuclei += core;
+
+                    m++;
+                }
+
+                MarkGraphic.Add(mult1 * sum_of_nuclei);
+            }
+
+            if (MarkGraphic.Max() > Ymax) Ymax = MarkGraphic.Max();
 
             chart1.ChartAreas[0].AxisY.Minimum = 0;
             chart1.ChartAreas[0].AxisY.Maximum = Ymax;
@@ -109,10 +199,35 @@ namespace TVlab2
 
             int k = 0;
             //Выводим плотность распределения
-            for (double i = min; i <= max; i += h / 10)
+            for (double i = min; i <= max; i += inc)
             {
                 this.chart1.Series[2].Points.AddXY(i, Y[k]);
                 k++;
+            }
+
+            
+
+            //Выводим оценку
+            k = 0;
+            for (double i = min; i <= max; i += inc)
+            {
+                this.chart1.Series[1].Points.AddXY(i, MarkGraphic[k]);
+                k++;
+            }
+   
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked == true)
+            {
+                label4.Visible = false;
+                textBox4.Visible = false;
+            }
+            else
+            {
+                label4.Visible = true;
+                textBox4.Visible = true;
             }
         }
     }
